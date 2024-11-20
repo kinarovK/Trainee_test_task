@@ -1,1 +1,0 @@
-# Computools_test_task
