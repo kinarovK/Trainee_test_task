@@ -12,25 +12,24 @@ namespace Computools_Test_Task.Tests
     public class ControllerTest
     {
         [Fact]
-        public void Execute_ShouldCalculateAverageGradeAndSetGrantAndPrintStudent()
+        public void ExecuteShouldCalculateAverageGradeAndSetGrantAndPrintStudent()
         {
             // Arrange
             var mockStudentEditor = new Mock<IStudentEditor>();
             var mockSubjectEditor = new Mock<ISubjectEditor>();
             var mockConsoleWriter = new Mock<IConsoleWriter>();
 
-            // Mock data
             var students = new List<Student>
-        {
-            new Student { id = Guid.NewGuid(), firstName = "John", secondName = "Doe", subjects = new List<Subject>() },
-            new Student { id = Guid.NewGuid(), firstName = "Jane", secondName = "Smith", subjects = new List<Subject>() }
-        };
+            {
+                new Student { id = Guid.NewGuid(), firstName = "John", secondName = "Doe", subjects = new List<Subject>() },
+                new Student { id = Guid.NewGuid(), firstName = "Jane", secondName = "Smith", subjects = new List<Subject>() }
+            };
 
             var subjects = new List<Subject>
-        {
-            new Subject { id = Guid.NewGuid(), name = "Math", grade = 85, studentId = students[0].id },
-            new Subject { id = Guid.NewGuid(), name = "English", grade = 90, studentId = students[1].id }
-        };
+            {
+                new Subject { id = Guid.NewGuid(), name = "Math", grade = 85, studentId = students[0].id },
+                new Subject { id = Guid.NewGuid(), name = "English", grade = 90, studentId = students[1].id }
+            };
 
             mockSubjectEditor.Setup(x => x.Fill()).Returns(subjects);
             mockStudentEditor.Setup(x => x.FillStudents()).Returns(students);
@@ -52,7 +51,47 @@ namespace Computools_Test_Task.Tests
                 mockStudentEditor.Verify(x => x.SetGrant(student, 88.0), Times.Once);
             }
 
-            mockConsoleWriter.Verify(x => x.PrintToConsole(It.IsAny<Student>()), Times.Once);
+            mockConsoleWriter.Verify(x => x.PrintToConsoleResult(It.IsAny<Student>()), Times.Once);
+        }
+
+        [Fact]
+        public void Execute_ShouldThrowInvalidOperationExceptionSubjectsOrStudentsAreNull()
+        {
+            var mockStudentEditor = new Mock<IStudentEditor>();
+            var mockSubjectEditor = new Mock<ISubjectEditor>();
+            var mockConsoleWriter = new Mock<IConsoleWriter>();
+
+            // Arrange
+            mockStudentEditor.Setup(x => x.FillStudents()).Returns((List<Student>)null);
+            mockSubjectEditor.Setup(x => x.Fill()).Returns((List<Subject>)null);
+
+            var controller = new Controller(mockStudentEditor.Object, mockSubjectEditor.Object, mockConsoleWriter.Object);
+
+            // Act
+            controller.Execute();
+
+            // Assert
+            mockConsoleWriter.Verify(x => x.PrintToConsoleErrorMessage(It.Is<string>(msg => msg.Contains("Students or Subjects data is missing."))), Times.Once);
+        }
+
+        [Fact]
+        public void Execute_ShouldCatchArgumentNullExceptionWhenFillStudentsThrowException()
+        {
+            // Arrange
+            var mockStudentEditor = new Mock<IStudentEditor>();
+            var mockSubjectEditor = new Mock<ISubjectEditor>();
+            var mockConsoleWriter = new Mock<IConsoleWriter>();
+
+            mockStudentEditor.Setup(x => x.FillStudents()).Throws<ArgumentNullException>();
+            mockSubjectEditor.Setup(x => x.Fill()).Returns(new List<Subject>());
+
+            var controller = new Controller(mockStudentEditor.Object, mockSubjectEditor.Object, mockConsoleWriter.Object);
+
+            // Act
+            controller.Execute();
+
+            // Assert
+            mockConsoleWriter.Verify(x => x.PrintToConsoleErrorMessage(It.Is<string>(msg => msg.Contains("Value cannot be null."))), Times.Once);
         }
     }
 }

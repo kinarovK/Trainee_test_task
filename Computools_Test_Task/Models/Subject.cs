@@ -13,7 +13,7 @@ namespace Computools_Test_Task.Models
         public Guid id;
         public string name;
         public Guid studentId;
-        public byte grade; //handle max 100 
+        public byte grade; 
         public DateTime date;
     }
 }

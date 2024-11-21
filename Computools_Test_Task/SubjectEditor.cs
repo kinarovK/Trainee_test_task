@@ -49,10 +49,15 @@ namespace Computools_Test_Task
             };
             return subjects;
         }
+
         public List<Subject> GetSubjectStudentId(Guid studentId, List<Subject> subjects)
         {
             var result = new List<Subject>();
-            result.AddRange(subjects.Where(s=>s.studentId== studentId).ToList());
+            result.AddRange(subjects.Where( s=> s.studentId == studentId).ToList());
+            if (result.Count == 0)
+            {
+                throw new ArgumentException("Student with selected Id not found");
+            }
             return result;
         }
     }

@@ -15,7 +15,7 @@ namespace Computools_Test_Task
 
             var controller = service.BuildServiceProvider().GetService<IController>();
 
-            controller.Execute();
+            controller!.Execute();
         }
     }
 }

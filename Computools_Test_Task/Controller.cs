@@ -3,6 +3,7 @@ using Computools_Test_Task.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -23,18 +24,38 @@ namespace Computools_Test_Task
 
         public void Execute()
         {
-            var subjects = this.subjectEditor.Fill();
-            var students = this.studentEditor.FillStudents();
-            studentEditor.SetSubject(students, subjects);
-
-            foreach (var student in students)
+            try
             {
-                student.averageGrade = this.studentEditor.CalculateAverageGrade(student);
-                this.studentEditor.SetGrant(student, student.averageGrade);
+                var subjects = this.subjectEditor.Fill();
+                var students = this.studentEditor.FillStudents();
+
+                if (subjects is null || students is null)
+                {
+                    throw new InvalidOperationException("Students or Subjects data is missing.");
+                }
+                this.studentEditor.SetSubject(students, subjects);
+
+                foreach (var student in students)
+                {
+                    student.averageGrade = this.studentEditor.CalculateAverageGrade(student);
+                    this.studentEditor.SetGrant(student, student.averageGrade);
+                }
+                var rand = new Random();
+                var selectedStudent = students[rand.Next(students.Count)];
+                this.consoleWriter.PrintToConsoleResult(selectedStudent);
             }
-            var rand = new Random();
-            var selectedStudent = students[rand.Next(0, students.Count-1)];
-            this.consoleWriter.PrintToConsole(selectedStudent);
+            catch (ArgumentNullException ex)
+            {
+                this.consoleWriter.PrintToConsoleErrorMessage($"{ex.Message}");
+            }
+            catch (InvalidOperationException ex)
+            {
+                this.consoleWriter.PrintToConsoleErrorMessage($"{ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                this.consoleWriter.PrintToConsoleErrorMessage($"{ex.Message}");
+            }
         }
     }
 }

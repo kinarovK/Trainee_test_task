@@ -9,6 +9,7 @@ namespace Computools_Test_Task.Interfaces
 {
     public interface IConsoleWriter
     {
-        public void PrintToConsole(Student student);
+        public void PrintToConsoleResult(Student student);
+        public void PrintToConsoleErrorMessage(string message);
     }
 }

@@ -9,6 +9,37 @@ namespace Computools_Test_Task.Tests
 {
     public class StudentEditorTests
     {
+        private static Guid testGuid = Guid.NewGuid();
+        private readonly List<Student> testStudents = new List<Student>
+        {
+            new Student
+            {
+                id = testGuid,
+                firstName = "FirstName",
+                secondName = "LastName",
+                age = 22,
+            },
+        };
+        private readonly List<Subject> testSubjects = new List<Subject>
+            {
+                new Subject
+                {
+                    id = Guid.NewGuid(),
+                    date = DateTime.Now,
+                    grade = 99,
+                    name = "TestSubject1",
+                    studentId = testGuid,
+                },
+                new Subject
+                {
+                    id = Guid.NewGuid(),
+                    date = DateTime.Now.AddDays(-5),
+                    grade = 55,
+                    name = "TestSubject2",
+                    studentId = testGuid,
+                },
+            };
+
         [Fact]
         public void FillStudentReturnsList()
         {
@@ -39,43 +70,14 @@ namespace Computools_Test_Task.Tests
         public void SetSubjectChangeStudent()
         {
             //Arrange 
-            var testGuid = Guid.NewGuid();
             var studentEditor = new StudentEditor();
-            var students = new List<Student>();
-            students.Add(new Student 
-            {
-                id = testGuid,
-                firstName = "FirstName",
-                secondName = "LastName",
-                age = 22,
-            });
-
-            var subjects = new List<Subject>
-            {
-                new Subject
-                {
-                    id = Guid.NewGuid(),
-                    date = DateTime.Now,
-                    grade = 99,
-                    name = "TestSubject1",
-                    studentId = testGuid,
-                },
-                new Subject
-                {
-                    id = Guid.NewGuid(),
-                    date = DateTime.Now.AddDays(-5),
-                    grade = 55,
-                    name = "TestSubject2",
-                    studentId = testGuid,
-                },
-            };
 
             //Act
-            studentEditor.SetSubject(students, subjects);
+            studentEditor.SetSubject(testStudents, testSubjects);
            
             //Assert
-            Assert.NotEmpty(students.First().subjects);
-            Assert.Equal(2, students.First().subjects.Count);
+            Assert.NotEmpty(testStudents.First().subjects);
+            Assert.Equal(2, testStudents.First().subjects.Count);
         }
 
         [Theory]
@@ -85,7 +87,7 @@ namespace Computools_Test_Task.Tests
         public void CalculateAverageGrade(byte firstGrade, byte secondGrade, double expectedAvg)
         {
             //Arrange 
-            var testGuid = Guid.NewGuid();
+
             var subjects = new List<Subject>
             {
                 new Subject
@@ -104,8 +106,7 @@ namespace Computools_Test_Task.Tests
                     name = "TestSubject2",
                     studentId = testGuid,
                 },
-            }; 
-
+            };
             var studentEditor = new StudentEditor();
             var student = new Student
             {
@@ -131,24 +132,14 @@ namespace Computools_Test_Task.Tests
         internal void SetGrantTest(double avgGrade, GrantType grant)
         {
             //Arrange 
-            var testGuid = Guid.NewGuid();
+            var selectedStudent = testStudents.FirstOrDefault();
             var studentEditor = new StudentEditor();
-            var student = new Student
-            {
-                id = testGuid,
-                firstName = "FirstName",
-                secondName = "LastName",
-                age = 22,
-                averageGrade = avgGrade,
-            };
 
             //Act
-
-            studentEditor.SetGrant(student, avgGrade);
+            studentEditor.SetGrant(selectedStudent, avgGrade);
 
             //Assert 
-            Assert.Equal(grant, student.grantType);
+            Assert.Equal(grant, selectedStudent.grantType);
         }
-
     }
 }

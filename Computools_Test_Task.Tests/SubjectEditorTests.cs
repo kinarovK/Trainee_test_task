@@ -11,43 +11,27 @@ namespace Computools_Test_Task.Tests
     {
         private readonly List<Subject> testSubjects = new List<Subject>
         {
-                    new Subject
-        {
-            id = Guid.NewGuid(),
-            name = "Math",
-            grade = 85,
-            date = DateTime.Now,
-            studentId = Guid.Parse("9D20B20A-AB66-43F0-81BA-D33732EB5FEB"),
-        },
-        new Subject
-        {
-            id = Guid.NewGuid(),
-            name = "Geography",
-            grade = 57,
-            date = DateTime.Now.AddDays(-7),
-            studentId = Guid.Parse("9D20B20A-AB66-43F0-81BA-D33732EB5FEB"),
-        },
-        new Subject
-        {
-            id = Guid.NewGuid(),
-            name = "Biology",
-            grade = 78,
-            date = DateTime.Now.AddDays(-8),
-            studentId = Guid.Parse("A3088A92-CE7F-44DE-BCAA-CBDF34CF8DD9"),
-        },
-        new Subject
-        {
-            id = Guid.NewGuid(),
-            name = "English",
-            grade = 99,
-            date = DateTime.Now.AddDays(-7),
-            studentId = Guid.Parse("A3088A92-CE7F-44DE-BCAA-CBDF34CF8DD9"),
-        }
-    };
+            new Subject
+            {
+                id = Guid.NewGuid(),
+                name = "TestSubject1",
+                grade = 85,
+                date = DateTime.Now,
+                studentId = Guid.Parse("9D20B20A-AB66-43F0-81BA-D33732EB5FEB"),
+            },
+            new Subject
+            {
+                id = Guid.NewGuid(),
+                name = "TestSubject2",
+                grade = 57,
+                date = DateTime.Now.AddDays(-7),
+                studentId = Guid.Parse("9D20B20A-AB66-43F0-81BA-D33732EB5FEB"),
+            },
+        };
         
 
         [Fact]
-        public void Fill_ShouldReturnFourSubjects()
+        public void FillShouldReturnTwoSubjects()
         {
             // Arrange
             var service = new SubjectEditor();
@@ -56,19 +40,19 @@ namespace Computools_Test_Task.Tests
             var subjects = service.Fill();
 
             // Assert
-            Assert.Equal(4, subjects.Count); // Ensure there are 4 subjects
+            Assert.Equal(4, subjects.Count);
         }
 
         [Fact]
-        public void Fill_ShouldContainExpectedStudentIds()
+        public void FillShouldContainExpectedStudentIds()
         {
             // Arrange
             var service = new SubjectEditor();
             var expectedStudentIds = new[]
             {
-            Guid.Parse("9D20B20A-AB66-43F0-81BA-D33732EB5FEB"),
-            Guid.Parse("A3088A92-CE7F-44DE-BCAA-CBDF34CF8DD9")
-        };
+                Guid.Parse("9D20B20A-AB66-43F0-81BA-D33732EB5FEB"),
+                Guid.Parse("A3088A92-CE7F-44DE-BCAA-CBDF34CF8DD9")
+            };
 
             // Act
             var subjects = service.Fill();
@@ -79,7 +63,7 @@ namespace Computools_Test_Task.Tests
         }
 
         [Fact]
-        public void Fill_ShouldContainValidGrades()
+        public void FillShouldContainValidGrades()
         {
             // Arrange
             var service = new SubjectEditor();
@@ -92,7 +76,7 @@ namespace Computools_Test_Task.Tests
         }
 
         [Fact]
-        public void Fill_ShouldAssignDifferentIdsToSubjects()
+        public void FillShouldAssignDifferentIdsToSubjects()
         {
             // Arrange
             var service = new SubjectEditor();
@@ -105,7 +89,7 @@ namespace Computools_Test_Task.Tests
         }
 
         [Fact]
-        public void GetSubjectStudentId_ShouldReturnSubjectsForStudent()
+        public void GetSubjectStudentIdShouldReturnSubjectsForStudent()
         {
             // Arrange
             var service = new SubjectEditor();
@@ -117,22 +101,21 @@ namespace Computools_Test_Task.Tests
             // Assert
             Assert.NotEmpty(result);
             Assert.All(result, s => Assert.Equal(studentId, s.studentId));
-            Assert.Equal(2, result.Count); // There are 2 subjects for this studentId
+            Assert.Equal(2, result.Count);
         }
 
         [Fact]
-        public void GetSubjectStudentId_ShouldReturnEmptyListForUnknownStudentId()
+        public void GetSubjectStudentIdReturnsExceptionForUnkownId()
         {
             // Arrange
             var service = new SubjectEditor();
             var unknownStudentId = Guid.NewGuid();
 
             // Act
-            var result = service.GetSubjectStudentId(unknownStudentId, testSubjects);
-
+            var exception = Assert.Throws<ArgumentException>(() => service.GetSubjectStudentId(unknownStudentId, testSubjects));
+            
             // Assert
-            Assert.Empty(result);
+            Assert.Equal("Student with selected Id not found", exception.Message);
         }
-
     }
 }

@@ -44,14 +44,15 @@ namespace Computools_Test_Task
         {
             if (student.subjects.Count == 0)
             {
-                //maybe throw exception?
-                return 0;
+                throw new InvalidOperationException("Cannot calculate average grade for a student with no subjects.");
             }
+
             var tempSum = 0;
             foreach (var item in student.subjects)
             {
                 tempSum = tempSum + item.grade;
             }
+
             double result = tempSum / (double)student.subjects.Count;
             return result;
         }
@@ -66,15 +67,11 @@ namespace Computools_Test_Task
             {
                 student.grantType = GrantType.Regular;
             }
-            else if (avgGrade >= 90 && avgGrade <= 100)
+            else
             {
                 student.grantType = GrantType.Increased;
             }
-            else
-            {
-                throw new ArgumentException(nameof(avgGrade), "AvgGrade should within 0-100");
-            }
-
+            
         }
     }
 }

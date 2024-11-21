@@ -12,7 +12,7 @@ namespace Computools_Test_Task
     [ExcludeFromCodeCoverage]
     internal class ConsoleWriter : IConsoleWriter
     {
-        public void PrintToConsole(Student student)
+        public void PrintToConsoleResult(Student student)
         {
             Console.WriteLine($"ID: {student.id}");
             Console.WriteLine($"Name: {student.firstName} {student.secondName}");
@@ -25,6 +25,11 @@ namespace Computools_Test_Task
             {
                 Console.WriteLine($" - {subject.name}: {subject.grade}");
             }
+        }
+
+        public void PrintToConsoleErrorMessage(string message)
+        {
+            Console.WriteLine($"Error durring the app running: '\n' {message}");
         }
     }
 }
